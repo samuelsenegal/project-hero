@@ -5,24 +5,26 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    const float GRAVITY = -9.81f;
-    const float MOVE_RANGE = 7.5f;
     const float ONE = 1f;
+    const float GRAVITY = -4.905f;
+    const float MOVE_RANGE = 7.5f;
+    const float JUMP_SCALE = 100f;
 
     [SerializeField] float moveSpeed = 250f;
-    [SerializeField] float jumpStrength = 500f;
-    [SerializeField] float strafeCooldown = 0.33f;
+    [SerializeField] float jumpStrength = 100f;
+    [SerializeField] float strafeCooldown = 0.5f;
     Vector3 gravity;
     Vector2 initStrafe;
-    int laneIndex;
     float initJump;
+    int laneIndex;
 
-    public Rigidbody rb;
     public PlayerInputActions controls;
+    public Rigidbody rb;
     public State state;
 
     private InputAction move;
     private InputAction jump;
+
     public enum State
     {
         Any,
@@ -50,7 +52,19 @@ public class PlayerController : MonoBehaviour
         switch (collision.gameObject.tag)
         {
             case "Ground":
+                // Reset gravity on touching the ground
                 state = State.Grounded;
+                gravity.Set(0, GRAVITY, 0);
+                break;
+        }
+    }
+   
+    private void OnCollisionStay(Collision collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Ground":
+                if (!state.Equals(State.Strafing)) state = State.Grounded;
                 gravity.Set(0, GRAVITY, 0);
                 break;
         }
@@ -73,58 +87,64 @@ public class PlayerController : MonoBehaviour
     {
         initStrafe = move.ReadValue<Vector2>();
         initJump = jump.ReadValue<float>();
-
     }
 
     void FixedUpdate()
     {
-        rb.velocity = (Vector3.forward + ApplyGravititationalAcceleration(gravity) * Time.fixedDeltaTime) * moveSpeed * Time.fixedDeltaTime;
-        StartCoroutine(Strafe(initStrafe));
+        rb.velocity = (Vector3.forward + (gravity * Time.fixedDeltaTime)) * moveSpeed * Time.fixedDeltaTime;
+        Strafe(initStrafe);
         Jump(initJump);
+        if (!state.Equals(State.Grounded) || state.Equals(State.Strafing))
+        {
+            ApplyGravititationalAcceleration();
+        }
     }
 
-    IEnumerator Strafe(Vector2 direction)
+    void Strafe(Vector2 initStrafe)
     {
-        if (state.Equals(State.Strafing)) yield break;
+        if (state.Equals(State.Strafing)) return;
 
-        if (direction.Equals(Vector2.left) && (laneIndex != -1))
+        if (initStrafe.Equals(Vector2.left) && (laneIndex != -1))
         {
             // Prevents going left if already in left lane
-            if (state.Equals(State.Grounded)) state = State.Strafing;
             transform.Translate(-MOVE_RANGE, 0, 0);
             laneIndex--;
-            if (state.Equals(State.Strafing)) state = State.Any;
-            yield return new WaitForSeconds(strafeCooldown);
+            StartCoroutine(ApplyStrafeCooldown(strafeCooldown));
         }
-        else if (direction.Equals(Vector2.right) && (laneIndex != 1))
+        else if (initStrafe.Equals(Vector2.right) && (laneIndex != 1))
         {
             // Prevents going right if already in right lane
-            if (state.Equals(State.Grounded)) state = State.Strafing;
             transform.Translate(MOVE_RANGE, 0, 0);
             laneIndex++;
-            if (state.Equals(State.Strafing)) state = State.Any;
-            yield return new WaitForSeconds(strafeCooldown);
+            StartCoroutine(ApplyStrafeCooldown(strafeCooldown));
         }
+    }
+
+    IEnumerator ApplyStrafeCooldown(float strafeCooldown)
+    {
+        state = State.Strafing;
+        yield return new WaitForSeconds(strafeCooldown);
+        state = State.Any;
     }
 
     void Jump(float initJump)
     {
-        if (state.Equals(State.Strafing) || state.Equals(State.Jumping)) return;
+        if (!state.Equals(State.Grounded)) return;
         if (initJump.Equals(ONE))
         {
-            rb.AddForce(Vector3.up * jumpStrength);
+            rb.AddForce(Vector3.up * JUMP_SCALE * jumpStrength);
             state = State.Jumping;
         }
     }
 
-    Vector3 ApplyGravititationalAcceleration(Vector3 gravity)
+    void ApplyGravititationalAcceleration()
     {
-        if (state.Equals(State.Jumping))
-        {
-            return gravity += gravity;
-        } else
-        {
-            return gravity;
-        }
+        gravity += gravity * 0.25f;
+        StartCoroutine(PerSecond());
+    }
+
+    IEnumerator PerSecond()
+    {
+        yield return new WaitForSeconds(ONE);
     }
 }
