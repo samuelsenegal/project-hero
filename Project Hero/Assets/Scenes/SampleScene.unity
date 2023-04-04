@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
+  m_IndirectSpecularColor: {r: 0.18028352, g: 0.22571376, b: 0.30692244, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -1054,7 +1054,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 614698026}
-  - component: {fileID: 614698027}
   m_Layer: 0
   m_Name: Placeholder_City_Block_0
   m_TagString: Untagged
@@ -1070,7 +1069,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 614698025}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 13.2, y: 9.86, z: 0.2}
+  m_LocalPosition: {x: 13.2, y: 9.86, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1085,19 +1084,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &614698027
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 614698025}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &628804943
 GameObject:
   m_ObjectHideFlags: 0
@@ -3276,8 +3262,8 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1, y: 2.547023, z: 1}
+  m_Center: {x: 0, y: 0.7735104, z: 0}
 --- !u!33 &1977715652
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -3295,10 +3281,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1977715649}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9ccaf91dae5ae174bb11c813fef88c79, type: 3}
+  m_Script: {fileID: 11500000, guid: 8089ccb58e22796499d33b85adb5f9b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainList: []
+  terrainList:
+  - {fileID: 614698025}
+  currentBlock: {fileID: 0}
 --- !u!1 &2029603619
 GameObject:
   m_ObjectHideFlags: 0
@@ -3316,7 +3304,7 @@ GameObject:
   - component: {fileID: 2029603627}
   m_Layer: 0
   m_Name: ' Model'
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3459,7 +3447,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c9816bf888b038d4c9fa997a54bfff1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 250
+  moveSpeed: 1500
   jumpStrength: 100
   strafeCooldown: 0.33
   rb: {fileID: 2029603625}

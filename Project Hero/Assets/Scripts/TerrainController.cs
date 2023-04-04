@@ -4,32 +4,37 @@ using UnityEngine;
 
 public class TerrainController : MonoBehaviour
 {
+    private Vector3 offset = new Vector3(0, 0, 100);
+
     [SerializeField] public GameObject[] terrainList;
-    private float offset = 100;
 
-    private void OnCollisionEnter(Collision collision)
+    private bool generating = false;
+
+    private void OnTriggerEnter(Collider other)
     {
-        GenerateTerrain();
+        if (other.gameObject.CompareTag("Player"))
+        {
+            GenerateTerrain(transform.root.position);
+        }
     }
 
-    private void OnCollisionExit(Collision collision)
+    private void OnTriggerExit(Collider other)
     {
-        Destroy(this.gameObject);
+        Destroy(transform.root.gameObject);
     }
 
-    void Start()
+    void GenerateTerrain(Vector3 position)
     {
-
+        if (generating) { return; }
+        Instantiate(terrainList[0], position + offset, Quaternion.identity);
+        StartCoroutine(SectionCooldown());
     }
 
-    void Update()
+    IEnumerator SectionCooldown()
     {
-
-    }
-
-    void GenerateTerrain()
-    {
-
+        generating = true;
+        yield return new WaitForSeconds(1.0f);
+        generating = false;
     }
 
 }
