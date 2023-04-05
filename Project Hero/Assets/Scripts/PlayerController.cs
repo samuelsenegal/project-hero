@@ -9,10 +9,11 @@ public class PlayerController : MonoBehaviour
     const float GRAVITY = -4.905f;
     const float MOVE_RANGE = 7.5f;
     const float JUMP_SCALE = 100f;
+    const float MOVE_SCALE = 10f;
 
-    [SerializeField] float moveSpeed = 250f;
+    [SerializeField] float moveSpeed = 200f;
     [SerializeField] float jumpStrength = 100f;
-    [SerializeField] float strafeCooldown = 0.5f;
+    [SerializeField] float strafeCooldown = 0.33f;
     Vector3 gravity;
     Vector2 initStrafe;
     float initJump;
@@ -91,7 +92,7 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        rb.velocity = (Vector3.forward + (gravity * Time.fixedDeltaTime)) * moveSpeed * Time.fixedDeltaTime;
+        rb.velocity = (Vector3.forward + (gravity * Time.fixedDeltaTime)) * (moveSpeed * MOVE_SCALE) * Time.fixedDeltaTime;
         Strafe(initStrafe);
         Jump(initJump);
         if (!state.Equals(State.Grounded) || state.Equals(State.Strafing))

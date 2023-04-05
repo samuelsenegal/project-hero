@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TerrainController : MonoBehaviour
 {
-    private Vector3 offset = new Vector3(0, 0, 100);
+    private Vector3 offset = new Vector3(0, 0, 400);
 
     [SerializeField] public GameObject[] terrainList;
 
